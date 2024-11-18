@@ -12,6 +12,15 @@ module.exports = {
         highlight:"#AB0C2E",
       },
     },
+    keyframes: {
+      fadePulse: {
+        '0%, 100%': { opacity: '0' },
+        '50%': { opacity: '1' },
+      },
+    },
+    animation: {
+      fadePulse: 'fadePulse 1s ease-in-out infinite', 
+    },
   },
   plugins: [],
 }
