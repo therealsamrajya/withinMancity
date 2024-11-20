@@ -1,11 +1,54 @@
-import React from "react";
-import { View, Text, TextInput, Pressable } from "react-native";
+import React,{useState} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { View, Text, TextInput, Pressable, Alert } from "react-native";
 
 interface FormProps {
   onNavigate: () => void;
 }
 
 export default function Login({ onNavigate }: FormProps) {
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const saveLoginData = async () => {
+    try {
+      await AsyncStorage.setItem("userCredential",JSON.stringify({email,password}))
+      Alert.alert("Success","Login Info saved !!")
+      console.log(email,password);
+      
+      
+    } catch (error) {
+      console.error("Error saving data",error);
+      
+    }
+  }
+
+  const getLoginData = async () => {
+    try {
+     const jsonValue= await AsyncStorage.getItem("userCredential")
+     if(jsonValue != null){
+      const loginData = JSON.parse(jsonValue);
+      return loginData;
+     }
+      
+    } catch (error) {
+      console.error("Error retrieving data",error);
+      
+    }
+  }
+
+  const handleSubmit = async () => {
+    if (!email || !password){
+      Alert.alert("Pleaase fill all the required filled")
+      return
+    }
+    await saveLoginData();
+  
+    
+    Alert.alert("Logged in successfully !")
+  }
+
   return (
     <View className="flex-1 bg-tertiary w-[90vw] max-h-[50vh] px-4 py-3 text-secondary font-bold">
       <Text className="text-2xl font-bold text-center text-secondary mb-6">
@@ -18,7 +61,8 @@ export default function Login({ onNavigate }: FormProps) {
         <TextInput
           className="border border-secondary rounded-lg p-3 text-base bg-white"
           placeholder="Enter your email"
-          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
@@ -29,13 +73,15 @@ export default function Login({ onNavigate }: FormProps) {
           className="border border-secondary rounded-lg p-3 text-base bg-white"
           placeholder="Enter your password"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
       {/* Submit Button */}
       <Pressable
         className="bg-highlight p-2 rounded-md"
-        onPress={() => alert("Logged In!")}
+        onPress={handleSubmit}
       >
         <Text className="text-tertiary">Submit</Text>
       </Pressable>

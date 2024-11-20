@@ -1,11 +1,6 @@
 import { Text, View ,Image} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import CardItem from "@/components/CardItem";
-// import {cardData} from "../constants/data"
-// import Carousel from "react-native-snap-carousel"
-// import { useRouter } from "expo-router";
-// import { Stack } from "tamagui";
-import CardList from "@/components/CardList"
+import CardList from "@/components/card/CardList"
 export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-tertiary" >
