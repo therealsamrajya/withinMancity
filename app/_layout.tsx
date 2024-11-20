@@ -48,6 +48,20 @@ export default function RootLayout() {
             }}
             name="Fixture"
           />
+
+          <Tabs.Screen
+            options={{
+              title: "Profile",
+              tabBarIcon: ({ color, size }) => (
+                <Image
+                  className=" bg-transparent"
+                  source={require("../assets/images/fans.png")}
+                  style={{ width: size, height: 30, marginBottom: 6 }}
+                />
+              ),
+            }}
+            name="Profile"
+          />
         </Tabs>
       </SafeAreaProvider>
     </ThemeProvider>
