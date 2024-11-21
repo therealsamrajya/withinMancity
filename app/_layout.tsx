@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
 import "../global.css";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "../context/ThemeContext";
@@ -8,61 +8,19 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <SafeAreaProvider>
-        <Tabs screenOptions={{ headerShown: false }}>
-          <Tabs.Screen
-            options={{
-              title: "Home",
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={require("../assets/images/mancity.png")}
-                  style={{ width: size, height: size }}
-                />
-              ),
-            }}
-            name="index"
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* Tabs Navigation */}
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false }}
           />
 
-          <Tabs.Screen
-            options={{
-              title: "FanVoice",
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  className=" bg-transparent"
-                  source={require("../assets/images/fans.png")}
-                  style={{ width: size, height: 30, marginBottom: 6 }}
-                />
-              ),
-            }}
-            name="FanVoice"
+          {/* Dynamic News Screen */}
+          <Stack.Screen
+            name="news/[id]"
+            options={{ headerShown: false }}
           />
-
-          <Tabs.Screen
-            options={{
-              title: "Fixture",
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={require("../assets/images/fixture.png")}
-                  style={{ width: size, height: size }}
-                />
-              ),
-            }}
-            name="Fixture"
-          />
-
-          <Tabs.Screen
-            options={{
-              title: "Profile",
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  className=" bg-transparent"
-                  source={require("../assets/images/fans.png")}
-                  style={{ width: size, height: 30, marginBottom: 6 }}
-                />
-              ),
-            }}
-            name="Profile"
-          />
-        </Tabs>
+        </Stack>
       </SafeAreaProvider>
     </ThemeProvider>
   );

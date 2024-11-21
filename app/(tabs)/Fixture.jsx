@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Image, FlatList, RefreshControl } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { footballEndpoints } from "../utils/api";
+import { footballEndpoints } from "../../utils/api"
 
 const Fixture = () => {
   const [fixtures, setFixtures] = useState([]);
@@ -46,7 +46,7 @@ const Fixture = () => {
   if (loading && !refreshing) {
     return (
       <View className='flex-1 w-full justify-center items-center bg-tertiary'>
-        <Image className=" animate-fadePulse w-[40vw] h-[20vh]" source={require("../assets/images/mancity.png")} />
+        <Image className=" animate-fadePulse w-[40vw] h-[20vh]" source={require("@/assets/images/mancity.png")} />
         <Text className="mt-6 text-secondary text-3xl">Welcome citizens ...</Text>
       </View>
     );
