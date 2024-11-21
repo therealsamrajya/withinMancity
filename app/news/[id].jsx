@@ -25,7 +25,7 @@ export default function EditScreen() {
       </Text>
 
       <Pressable className="mx-3 px-4 py-2   rounded-md w-[18vw] bg-secondary">
-        
+         
         <Link className="text-tertiary text-xl" href={"/(tabs)"}>
           <Text>Back</Text>
         </Link>
