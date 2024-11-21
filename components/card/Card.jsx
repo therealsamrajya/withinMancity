@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
-
+import React,{useState} from 'react';
+import { View, Text, Image ,Pressable} from 'react-native';
+import { useRouter } from 'expo-router';
 const Card = ({ item = {} }) => {
   const { 
     title = "Untitled", 
@@ -9,8 +9,15 @@ const Card = ({ item = {} }) => {
     image = null // Local image reference
   } = item;
 
+  const router = useRouter();
+
+  const handlePress = (id) => {
+    router.push(`/news/${id}`)
+  }
   return (
     <View className=" flex-1  justify-center  p-4 rounded-md mb-4">
+      <Pressable
+        onPress={()=> handlePress(item.id)}>
       {image ? (
         <Image
           source={image}
@@ -25,6 +32,7 @@ const Card = ({ item = {} }) => {
       <Text className="text-primary font-bold text-lg mt-4">{title}</Text>
       <Text className="text-secondary mt-2">{description}</Text>
       {fulldescription && <Text className="text-gray-500 mt-2">{fulldescription}</Text>}
+      </Pressable>
     </View>
   );
 };
