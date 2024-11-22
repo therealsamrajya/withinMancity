@@ -1,16 +1,32 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, Text, Pressable, Alert, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomTextInput from "./CustomTextInput";
 
+// Define the FormProps interface
 interface FormProps {
-  onNavigate: () => void;
+  onNavigatetoLogin: () => void;
 }
 
-export default function Register({ onNavigate }: FormProps) {
+const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Function to validate email format using regex
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Function to validate password strength using regex
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  // Function to check if the user already exists
   const checkExistingUser = async (userEmail: string) => {
     try {
       const existingUsers = await AsyncStorage.getItem("registeredUsers");
@@ -23,16 +39,20 @@ export default function Register({ onNavigate }: FormProps) {
       return false;
     } catch (error) {
       console.error("Failed to fetch the users", error);
+      Alert.alert("Error", "Failed to check existing users. Please try again.");
       return false;
     }
   };
 
+  // Function to save the new user registration data
   const saveRegisterData = async () => {
     try {
-      const userExists = await checkExistingUser(email);
+      setLoading(true);
 
+      const userExists = await checkExistingUser(email);
       if (userExists) {
         Alert.alert("Error", "User with this email already exists");
+        setLoading(false);
         return false;
       }
 
@@ -40,29 +60,41 @@ export default function Register({ onNavigate }: FormProps) {
       const users = existingUsers ? JSON.parse(existingUsers) : [];
       users.push({ name, email, password });
 
+      // Save the updated list of users
       await AsyncStorage.setItem("registeredUsers", JSON.stringify(users));
+      setLoading(false);
       return true;
     } catch (error) {
-      console.error("Failed to fetch Data", error);
+      console.error("Failed to save user data", error);
+      setLoading(false);
+      Alert.alert("Error", "Registration failed. Please try again.");
+      return false;
     }
   };
 
   const handleSubmit = async () => {
     if (!name || !email || !password) {
-      Alert.alert("Pleaase fill all the required filled");
+      Alert.alert("Error", "Please fill all the required fields.");
       return;
     }
 
-    if (password.length < 8) {
-      Alert.alert("Length should be greater than 8");
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Invalid email format.");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      Alert.alert(
+        "Error",
+        "Password must contain at least 8 characters, including letters and numbers."
+      );
       return;
     }
 
     const registrationSuccessful = await saveRegisterData();
-
     if (registrationSuccessful) {
-      Alert.alert("Registration success");
-      onNavigate();
+      Alert.alert("Success", "Registration successful!");
+      onNavigatetoLogin(); // Navigate to the login screen after successful registration
     }
   };
 
@@ -72,52 +104,45 @@ export default function Register({ onNavigate }: FormProps) {
         Register
       </Text>
 
-      {/* Name Field */}
-      <View className="mb-4">
-        <Text className="text-lg text-secondary-700 mb-2">Name</Text>
-        <TextInput
-          className="border border-secondary rounded-lg p-3 text-base bg-white"
-          placeholder="Enter your name"
-          value={name}
-          onChangeText={setName}
-        />
-      </View>
+      <CustomTextInput
+        label="Name"
+        placeholder="Enter your name"
+        value={name}
+        onChangeText={setName}
+      />
 
-      {/* Email Field */}
-      <View className="mb-4">
-        <Text className="text-lg text-secondary-700 mb-2">Email</Text>
-        <TextInput
-          className="border border-secondary rounded-lg p-3 text-base bg-white"
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-      </View>
+      <CustomTextInput
+        label="Email"
+        placeholder="Enter your email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
 
-      {/* Password Field */}
-      <View className="mb-6">
-        <Text className="text-lg text-secondary-700 mb-2">Password</Text>
-        <TextInput
-          className="border border-secondary rounded-lg p-3 text-base bg-white"
-          placeholder="Enter your password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
+      <CustomTextInput
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
 
-      {/* Submit Button */}
       <Pressable className="bg-highlight p-2 rounded-md" onPress={handleSubmit}>
         <Text className="text-tertiary">Submit</Text>
       </Pressable>
 
-      {/* Navigate to Login */}
+      {/* Display Loading Indicator while Async Operations are in Progress */}
+      {loading && (
+        <View className="flex justify-center items-center mt-4">
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
+
       <View className="flex-row justify-center items-center mt-[1rem]">
         <Text className="text-base text-secondary font-bold">
           Already have an account?{" "}
         </Text>
-        <Pressable onPress={onNavigate}>
+        <Pressable onPress={onNavigatetoLogin}>
           <Text className="text-base text-highlight font-bold underline">
             Login
           </Text>
@@ -125,4 +150,6 @@ export default function Register({ onNavigate }: FormProps) {
       </View>
     </View>
   );
-}
+};
+
+export default Register;

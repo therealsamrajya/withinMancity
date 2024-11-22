@@ -17,9 +17,9 @@ const Profile = () => {
       <Hero />
       <Text className="text-highlight text-2xl font-bold mb-[1rem]">Connect with the Champions!</Text>
       {isRegistering ? (
-        <Register onNavigate={() => setIsRegistering(false)} />
+        <Register onNavigatetoLogin={() => setIsRegistering(false)} />
       ) : (
-        <Login onNavigate={() => setIsRegistering(true)} />
+        <Login onNavigatetoRegister={() => setIsRegistering(true)} />
       )}
     </SafeAreaView>
   );
