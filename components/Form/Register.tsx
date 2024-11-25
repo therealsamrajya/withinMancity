@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, Alert, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomTextInput from "./CustomTextInput";
 
@@ -13,20 +22,18 @@ const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Function to validate email format using regex
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Function to validate password strength using regex
   const validatePassword = (password: string) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   };
 
-  // Function to check if the user already exists
   const checkExistingUser = async (userEmail: string) => {
     try {
       const existingUsers = await AsyncStorage.getItem("registeredUsers");
@@ -44,7 +51,6 @@ const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
     }
   };
 
-  // Function to save the new user registration data
   const saveRegisterData = async () => {
     try {
       setLoading(true);
@@ -59,10 +65,11 @@ const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
       const existingUsers = await AsyncStorage.getItem("registeredUsers");
       const users = existingUsers ? JSON.parse(existingUsers) : [];
       users.push({ name, email, password });
+      setSuccessMessage("Registration successful!");
 
-      // Save the updated list of users
       await AsyncStorage.setItem("registeredUsers", JSON.stringify(users));
       setLoading(false);
+      setSuccessMessage("Registration successful!");
       return true;
     } catch (error) {
       console.error("Failed to save user data", error);
@@ -94,61 +101,70 @@ const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
     const registrationSuccessful = await saveRegisterData();
     if (registrationSuccessful) {
       Alert.alert("Success", "Registration successful!");
-      onNavigatetoLogin(); // Navigate to the login screen after successful registration
+      onNavigatetoLogin();
     }
   };
 
   return (
-    <View className="flex-1 bg-tertiary px-4 py-3 text-secondary w-[90vw] max-h-[55vh] font-bold">
-      <Text className="text-2xl font-bold text-center text-secondary mb-6">
-        Register
-      </Text>
-
-      <CustomTextInput
-        label="Name"
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={setName}
-      />
-
-      <CustomTextInput
-        label="Email"
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      <CustomTextInput
-        label="Password"
-        placeholder="Enter your password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <Pressable className="bg-highlight p-2 rounded-md" onPress={handleSubmit}>
-        <Text className="text-tertiary">Submit</Text>
-      </Pressable>
-
-      {/* Display Loading Indicator while Async Operations are in Progress */}
-      {loading && (
-        <View className="flex justify-center items-center mt-4">
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
-
-      <View className="flex-row justify-center items-center mt-[1rem]">
-        <Text className="text-base text-secondary font-bold">
-          Already have an account?{" "}
-        </Text>
-        <Pressable onPress={onNavigatetoLogin}>
-          <Text className="text-base text-highlight font-bold underline">
-            Login
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-1 bg-tertiary px-4 py-3 text-secondary w-[90vw] max-h-[55vh] font-bold">
+          <Text className="text-2xl font-bold text-center text-secondary mb-6">
+            Register
           </Text>
-        </Pressable>
-      </View>
-    </View>
+
+          <CustomTextInput
+            label="Name"
+            placeholder="Enter your name"
+            value={name}
+            onChangeText={setName}
+          />
+
+          <CustomTextInput
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+
+          <CustomTextInput
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+          <Pressable className="bg-highlight px-2 py-1 rounded-md self-start" onPress={handleSubmit}>
+            <Text className="text-tertiary text-sm">Submit</Text>
+          </Pressable>
+
+          {loading && (
+            <View className="flex justify-center items-center mt-4">
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
+
+          <View className="flex-row justify-center items-center mt-[1rem]">
+            <Text className="text-base text-secondary font-bold">
+              Already have an account?{" "}
+            </Text>
+            <Pressable onPress={onNavigatetoLogin}>
+              <Text className="text-base text-highlight font-bold underline">
+                Login
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
