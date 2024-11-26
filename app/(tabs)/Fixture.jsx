@@ -75,6 +75,7 @@ const Fixture = () => {
 
       <FlatList
         data={fixtures}
+        testID='fixture-list'
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item: match }) => (
           <View className='mb-4 bg-tertiary rounded-lg shadow-sm border border-primary px-3'>
