@@ -156,7 +156,10 @@ const Register: React.FC<FormProps> = ({ onNavigatetoLogin }) => {
             <Text className="text-base text-secondary font-bold">
               Already have an account?{" "}
             </Text>
-            <Pressable onPress={onNavigatetoLogin}>
+            <Pressable
+            accessibilityLabel="Login Button"
+            accessibilityRole="button"
+            onPress={onNavigatetoLogin}>
               <Text className="text-base text-highlight font-bold underline">
                 Login
               </Text>

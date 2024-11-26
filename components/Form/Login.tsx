@@ -71,6 +71,8 @@ export default function Login({ onNavigatetoRegister }: FormProps) {
         />
 
         <Pressable
+          accessibilityLabel="Submit Button"
+          accessibilityRole="button"
           className="bg-highlight px-2 py-1 self-start rounded-md"
           onPress={handleSubmit}
         >
